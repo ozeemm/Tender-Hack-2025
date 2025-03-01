@@ -1,10 +1,11 @@
 <script setup>
-    import { ref, useTemplateRef, onMounted } from 'vue'
+    import { ref, useTemplateRef } from 'vue'
 
     import Chart from 'chart.js/auto';
 
     import MetricItem from "./components/MetricItem.vue"
-    import MyTable from "./components/MyTable.vue"
+    import TableBlock from "./components/TableBlock.vue"
+    import TableCreator from "./components/TableCreator.vue"
 
     const testChart = useTemplateRef('testChart')
     const innInput = useTemplateRef('innInput')
@@ -15,17 +16,8 @@
         { metric: "Метрика", value: "32.4%" },
         { metric: "Метрика", value: "250" }
     ])
-
-    const table_data = ref({
-        head: ["Код КПГЗ", "Наименование КПГЗ", "ИНН Победителя", "Начало КС", "Окончание КС"],
-        body: [
-            ["01.13.13.01.01", "РАСХОДНЫЕ МАТЕРИАЛЫ И КОМПЛЕКТУЮЩИЕ ДЛЯ ЛАЗЕРНЫХ ПРИНТЕРОВ И МФУ", "7721663977", "2022-12-02 09:18:07.577", "2022-12-02 15:17:08.287" ],
-            ["01.13.13.01.01", "РАСХОДНЫЕ МАТЕРИАЛЫ И КОМПЛЕКТУЮЩИЕ ДЛЯ ЛАЗЕРНЫХ ПРИНТЕРОВ И МФУ", "7721663977", "2022-12-02 09:18:07.577", "2022-12-02 15:17:08.287" ]
-        ]
-    })
     
-    const INN = ref()
-    const filters = ref({})
+    const INN = ref("123")
     const metricsParams = ref({ "param": "param1" })
 
     function onInnSubmit(){
@@ -59,62 +51,60 @@
         })
     }
 
-    function clearFilters(){
-        filters.value = {}
+    const blocks = ref([])
+    const isBlockCreating = ref(false)
+    const creatingBlock = ref()
+
+    function onAddtableClick(){
+        isBlockCreating.value = true
+        creatingBlock.value = TableCreator
+    }
+
+    function onSubmitBlockCreating(params){
+        if(params.type == 'table'){
+            blocks.value.push({ component: TableBlock, params: params })
+        }
+
+        onCancelBlockCreating()
+    }
+
+    function onBlockDeleteClick(index){
+        blocks.value.splice(index, 1)
+    }
+
+    function onCancelBlockCreating(){
+        isBlockCreating.value = false
+        creatingBlock.value = null
     }
 </script>
 
 <template>
     <div class="container mt-2 mb-2" v-if="INN != null">
         <div>
-            filters: {{ filters }}<br>
-            metricsParams: {{ metricsParams }}
+            <h5>Не забудь стартовую страничку с ИНН</h5>
+            metricsParams: {{ metricsParams }}<br>
+            isBlockCreating: {{ isBlockCreating }}
         </div>
 
         <div class="row">
-            <!-- Фильтры -->
-            <div class="col-2 border">
-                <div class="text-center mt-2">
-                    <h5>Фильтры</h5>
-                </div>
-                <div class="mt-2">
-                    Код КПГЗ<br>
-                    <input type="text" v-model="filters.kpgz_code">
+            <!-- Блоки -->
+            <div class="col-10">
+                <!--Отображение блоков-->
+                <div v-for="(block, index) in blocks">
+                    <component :is="block.component" :params="block.params" :id="index" @onDeleteClick="onBlockDeleteClick"/>
                 </div>
                 
-                <div class="mt-2">
-                    Дата<br>
-                    Начало: <input type="date" v-model="filters.dateStart">
-                    Конец: <input type="date" v-model="filters.dateEnd">
-                </div>
-                
-                <div class="mt-2">
-                    Регион<br>
-                    <label><input type="checkbox"> Город 1</label><br>
-                    <label><input type="checkbox"> Город 2</label><br>
-                    <label><input type="checkbox"> Город 3</label><br>
-                </div>
-
-                <div class="mt-2">
-                    <div>
-                        <button @click="showChart">Принять</button>
-                    </div>
-                    <div>
-                        <button @click="clearFilters">Очистить</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Таблица, графики -->
-            <div class="col-8">
-
-                <div class="border">
-                    <my-table :head_values="table_data.head" :body_values="table_data.body" />
+                <!--Отображение -->
+                <div v-if="isBlockCreating">
+                    <component :is="creatingBlock" @onSubmitClick="onSubmitBlockCreating" @onCancelClick="onCancelBlockCreating"/>
                 </div>
 
                 <div class="border mt-2">
                     <canvas class="m-2 p-4 border" ref="testChart" hidden="true"/>
                 </div>
+
+                <button v-if="!isBlockCreating" @click="onAddtableClick">Добавить таблицу</button>
+
 
             </div>
 
