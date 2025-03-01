@@ -20,7 +20,7 @@ function onSubmitClick() {
     <div class="border p-4 my-2">
         filters: {{ filters }}
 
-        <div class="d-flex row">
+        <div class="d-flex row justify-content-evenly">
             <div class="col-auto border m-1">
                 <b>Название таблицы</b><br>
                 <input type="text" v-model="filters.title">
@@ -42,12 +42,6 @@ function onSubmitClick() {
                 <label><input type="checkbox" value="city1" v-model="filters.regions"> Город 1</label><br>
                 <label><input type="checkbox" value="city2" v-model="filters.regions"> Город 2</label><br>
                 <label><input type="checkbox" value="city3" v-model="filters.regions"> Город 3</label><br>
-            </div>
-
-            <div class="col-auto border m-1">
-                <b>Дополнительные столбцы</b><br>
-                <label><input type="checkbox" v-model="filters.yearMoney"> Годовой денежный оборот</label><br>
-                <label><input type="checkbox" v-model="filters.ksCount"> Количество проведенных КС</label><br>
             </div>
         </div>
         <hr>

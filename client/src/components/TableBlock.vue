@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, onBeforeMount, defineExpose } from 'vue'
 
     const props = defineProps(['params', 'id'])
     const emit = defineEmits(['onDeleteClick'])
@@ -14,27 +14,63 @@
 
     const head_values = ref(table_example.head)
     const body_values = ref(table_example.body)
+    
+    const showingColumns = ref([])
+    
+    function toggleAllColumns(){
+        showingColumns.value = head_values.value
+    }
+
+    onBeforeMount(() => {
+        toggleAllColumns()
+    })
+
 </script>
 
 <template>
     <div class="border p-2 table-responsive position-relative">
-        {{ props.params }}
+        params: {{ props.params }}<br>
+
         <div class="d-flex justify-content-center">
-            <h5 class="col-11 my-3 text-center">{{ props.params.title }}</h5>
-            <button class="col-auto" @click="emit('onDeleteClick', props.id)">del</button>
+            <h5 class="col-10 my-3 text-center">{{ props.params.title }}</h5>
+
+            <!--Фильтры-->
+            <div v-if="!isBlockCreating" class="col-auto mt-auto mb-auto">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-funnel"></i>
+                        </button>
+
+                        <ul class="dropdown-menu">
+                            <li v-for="value in head_values">
+                                <label class="dropdown-item">
+                                    <input type="checkbox" class="form-check-input" :value="value" v-model="showingColumns"> {{ value }}
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            <button class="col-auto btn btn-default" @click="emit('onDeleteClick', props.id)">
+                <i class="bi bi-trash3"></i>
+            </button>
         </div>
 
         <table class="table-borderless m-3">
             <thead>
                 <tr>
                     <th class="p-2 text-center">№</th>
-                    <th v-for="value in head_values" class="p-2 text-center">{{ value }}</th>
+                    <template v-for="value in head_values">
+                        <th v-if="showingColumns.includes(value)" class="p-2 text-center">{{ value }}</th>
+                    </template>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(body, index) in body_values">
                     <td class="p-3 text-center"><strong>{{ index+1 }}</strong></td>
-                    <td v-for="value in body" class="p-3 text-center">{{ value }}</td>
+                    <template v-for="(value, j) in body">
+                        <td v-if="showingColumns.includes(head_values[j])" class="p-3 text-center">{{ value }}</td>
+                    </template>
                 </tr>
             </tbody>
         </table>

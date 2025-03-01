@@ -18,7 +18,7 @@ const metrics = ref([
 ])
 
 const INN = ref("Меня забыли")
-const metricsParams = ref({ "param": "param1" })
+const metricsParams = ref({ "period": "whole" })
 
 function onInnSubmit() {
     INN.value = innInput.value
@@ -69,6 +69,8 @@ function onSubmitBlockCreating(params) {
 }
 
 function onBlockDeleteClick(index) {
+    console.log(blocks.value[index].component)
+
     blocks.value.splice(index, 1)
 }
 
@@ -84,7 +86,7 @@ function onCancelBlockCreating() {
         <div>
             ИНН: {{ INN }}<br>
             metricsParams: {{ metricsParams }}<br>
-            isBlockCreating: {{ isBlockCreating }}
+            isBlockCreating: {{ isBlockCreating }}<br>
         </div>
 
         <div class="row">
@@ -96,6 +98,10 @@ function onCancelBlockCreating() {
                         @onDeleteClick="onBlockDeleteClick"/>
                 </div>
 
+                <div class="border mt-2">
+                    <canvas class="m-2 p-4 border" ref="testChart" hidden="true" />
+                </div>
+
                 <!-- Отображение блока создания -->
                 <div v-if="isBlockCreating">
                     <component :is="creatingBlock" 
@@ -103,20 +109,24 @@ function onCancelBlockCreating() {
                         @onCancelClick="onCancelBlockCreating"/>
                 </div>
 
-                <div class="border mt-2">
-                    <canvas class="m-2 p-4 border" ref="testChart" hidden="true" />
-                </div>
-
                 <!--Кнопка "Добавить"-->
-                <div v-if="!isBlockCreating" class="d-flex justify-content-center">
+                <div v-else class="d-flex justify-content-center">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"aria-expanded="false">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Добавить
                         </button>
 
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" @click="onAddTableClick">Таблица</a></li>
-                            <li><a class="dropdown-item" href="#" @click="console.log('Создай что-то ещё')">Что-то ещё</a></li>
+                            <li>
+                                <a class="dropdown-item" href="#" @click="onAddTableClick">
+                                    <i class="bi bi-table"></i> Таблица
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" @click="console.log('Создай что-то ещё')">
+                                    <i class="bi bi-bar-chart"></i> Столбчатая диаграмма
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -124,14 +134,17 @@ function onCancelBlockCreating() {
 
             <!-- Метрики -->
             <div class="col-2 border">
-                <div class="text-end" data-bs-toggle="collapse" href="#collapseMetricsParams">O</div>
+                <div class="text-end" data-bs-toggle="collapse" href="#collapseMetricsParams">
+                    <i class="bi bi-list"></i>
+                </div>
+
                 <div class="collapse border p-2" id="collapseMetricsParams" ref="metricsParamsCollapseButton">
-                    <label><input type="radio" name="metricsRadioButton" value="param1" v-model="metricsParams.param">
-                        Параметр 1</label>
-                    <label><input type="radio" name="metricsRadioButton" value="param2" v-model="metricsParams.param">
-                        Параметр 2</label>
-                    <label><input type="radio" name="metricsRadioButton" value="param3" v-model="metricsParams.param">
-                        Параметр 3</label>
+                    <label><input type="radio" name="metricsRadioButton" value="lastMonth" v-model="metricsParams.period">
+                        Последний месяц</label>
+                    <label><input type="radio" name="metricsRadioButton" value="lastYear" v-model="metricsParams.period">
+                        Последний год</label>
+                    <label><input type="radio" name="metricsRadioButton" value="whole" v-model="metricsParams.period">
+                        Весь период</label>
                 </div>
                 <metric-item v-for="metric in metrics" :metric="metric.metric" :value="metric.value" />
             </div>
