@@ -7,8 +7,10 @@ import TableCreator from "./components/TableCreator.vue"
 import BarChartBlock from "./components/BarChartBlock.vue"
 import BarChartCreator from "./components/BarChartCreator.vue"
 
-const innInput = useTemplateRef('innInput')
+
+// Metrics
 const metricsParamsCollapseButton = useTemplateRef('metricsParamsCollapseButton')
+const metricsParams = ref({ "period": "whole" })
 
 const metrics = ref([
     { metric: "Метрика", value: "10000000 млн." },
@@ -16,13 +18,19 @@ const metrics = ref([
     { metric: "Метрика", value: "250" }
 ])
 
+function onMetricsParamsChange(){
+    console.log("Metrics params changed!")
+}
+
+// INN
+const innInput = useTemplateRef('innInput')
 const INN = ref()
-const metricsParams = ref({ "period": "whole" })
 
 function onInnSubmit() {
     INN.value = innInput.value.value
 }
 
+// Blocks
 const blocks = ref([])
 const isBlockCreating = ref(false)
 const creatingBlock = ref()
@@ -113,12 +121,18 @@ function onCancelBlockCreating() {
                 </div>
 
                 <div class="collapse border p-2" id="collapseMetricsParams" ref="metricsParamsCollapseButton">
-                    <label><input type="radio" name="metricsRadioButton" value="lastMonth" v-model="metricsParams.period">
-                        Последний месяц</label>
-                    <label><input type="radio" name="metricsRadioButton" value="lastYear" v-model="metricsParams.period">
-                        Последний год</label>
-                    <label><input type="radio" name="metricsRadioButton" value="whole" v-model="metricsParams.period">
-                        Весь период</label>
+                    <label>
+                        <input type="radio" name="metricsRadioButton" value="lastMonth" v-model="metricsParams.period" @change="onMetricsParamsChange">
+                        Последний месяц
+                    </label>
+                    <label>
+                        <input type="radio" name="metricsRadioButton" value="lastYear" v-model="metricsParams.period" @change="onMetricsParamsChange">
+                        Последний год
+                    </label>
+                    <label>
+                        <input type="radio" name="metricsRadioButton" value="whole" v-model="metricsParams.period" @change="onMetricsParamsChange">
+                        Весь период
+                    </label>
                 </div>
                 <metric-item v-for="metric in metrics" :metric="metric.metric" :value="metric.value" />
             </div>
