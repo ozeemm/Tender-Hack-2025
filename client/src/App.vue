@@ -1,13 +1,12 @@
 <script setup>
 import { ref, useTemplateRef } from 'vue'
 
-import Chart from 'chart.js/auto';
-
 import MetricItem from "./components/MetricItem.vue"
 import TableBlock from "./components/TableBlock.vue"
 import TableCreator from "./components/TableCreator.vue"
+import BarChartBlock from "./components/BarChartBlock.vue"
+import BarChartCreator from "./components/BarChartCreator.vue"
 
-const testChart = useTemplateRef('testChart')
 const innInput = useTemplateRef('innInput')
 const metricsParamsCollapseButton = useTemplateRef('metricsParamsCollapseButton')
 
@@ -24,33 +23,6 @@ function onInnSubmit() {
     INN.value = innInput.value
 }
 
-function showChart() {
-    const data = [
-        { year: 2010, count: 10 },
-        { year: 2011, count: 20 },
-        { year: 2012, count: 15 },
-        { year: 2013, count: 25 },
-        { year: 2014, count: 22 },
-        { year: 2015, count: 30 },
-        { year: 2016, count: 28 },
-    ];
-
-    testChart.value.hidden = false
-
-    new Chart(testChart.value, {
-        type: 'bar',
-        data: {
-            labels: data.map(row => row.year),
-            datasets: [
-                {
-                    label: 'Acquisitions by year',
-                    data: data.map(row => row.count)
-                }
-            ]
-        }
-    })
-}
-
 const blocks = ref([])
 const isBlockCreating = ref(false)
 const creatingBlock = ref()
@@ -60,9 +32,16 @@ function onAddTableClick() {
     creatingBlock.value = TableCreator
 }
 
+function onAddBarChartClick(){
+    isBlockCreating.value = true
+    creatingBlock.value = BarChartCreator
+}
+
 function onSubmitBlockCreating(params) {
     if (params.type == 'table') {
         blocks.value.push({ component: TableBlock, params: params })
+    } else if(params.type == 'barchart'){
+        blocks.value.push({ component: BarChartBlock, params: params })
     }
 
     onCancelBlockCreating()
@@ -87,6 +66,7 @@ function onCancelBlockCreating() {
             ИНН: {{ INN }}<br>
             metricsParams: {{ metricsParams }}<br>
             isBlockCreating: {{ isBlockCreating }}<br>
+            blocks: {{ blocks.length }}<br>
         </div>
 
         <div class="row">
@@ -98,10 +78,6 @@ function onCancelBlockCreating() {
                         @onDeleteClick="onBlockDeleteClick"/>
                 </div>
 
-                <div class="border mt-2">
-                    <canvas class="m-2 p-4 border" ref="testChart" hidden="true" />
-                </div>
-
                 <!-- Отображение блока создания -->
                 <div v-if="isBlockCreating">
                     <component :is="creatingBlock" 
@@ -110,7 +86,7 @@ function onCancelBlockCreating() {
                 </div>
 
                 <!--Кнопка "Добавить"-->
-                <div v-else class="d-flex justify-content-center">
+                <div v-else class="d-flex justify-content-center mt-2">
                     <div class="btn-group">
                         <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             Добавить
@@ -123,7 +99,7 @@ function onCancelBlockCreating() {
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#" @click="console.log('Создай что-то ещё')">
+                                <a class="dropdown-item" href="#" @click="onAddBarChartClick">
                                     <i class="bi bi-bar-chart"></i> Столбчатая диаграмма
                                 </a>
                             </li>

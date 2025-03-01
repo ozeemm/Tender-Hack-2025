@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onBeforeMount, defineExpose } from 'vue'
+    import { ref, onBeforeMount } from 'vue'
 
     const props = defineProps(['params', 'id'])
     const emit = defineEmits(['onDeleteClick'])
