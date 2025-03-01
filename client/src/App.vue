@@ -16,11 +16,11 @@ const metrics = ref([
     { metric: "Метрика", value: "250" }
 ])
 
-const INN = ref("Меня забыли")
+const INN = ref()
 const metricsParams = ref({ "period": "whole" })
 
 function onInnSubmit() {
-    INN.value = innInput.value
+    INN.value = innInput.value.value
 }
 
 const blocks = ref([])
@@ -48,8 +48,6 @@ function onSubmitBlockCreating(params) {
 }
 
 function onBlockDeleteClick(index) {
-    console.log(blocks.value[index].component)
-
     blocks.value.splice(index, 1)
 }
 
@@ -127,10 +125,16 @@ function onCancelBlockCreating() {
         </div>
     </div>
     <div v-else>
-        <form @submit.prevent="onInnSubmit">
-            ИНН: <input type="text" ref="innInput">
-            <button type="submit">ОК</button>
-        </form>
+        <div class="container">
+            <form @submit.prevent="onInnSubmit" class="d-flex justify-content-center" style="margin-top: 25%;">
+                <label>
+                    <input type="text" class="form-control form-control-lg" placeholder="Введите ИНН" ref="innInput">
+                </label>
+                <button class="btn btn-default ms-1" type="submit">
+                    <i class="bi bi-box-arrow-in-right h3"></i>
+                </button>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -138,4 +142,5 @@ function onCancelBlockCreating() {
 body {
     color: #1A1A1A;
 }
+
 </style>
