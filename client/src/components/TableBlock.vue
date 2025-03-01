@@ -19,9 +19,11 @@
 <template>
     <div class="border p-2 table-responsive position-relative">
         {{ props.params }}
-        <h5 class="my-3 text-center">{{ props.params.title }}</h5>
-
-        <button class="position-absolute top-0 end-0 m-2" @click="emit('onDeleteClick', props.id)">del</button>
+        <div class="d-flex justify-content-center">
+            <h5 class="col-11 my-3 text-center">{{ props.params.title }}</h5>
+            <button class="col-auto" @click="emit('onDeleteClick', props.id)">del</button>
+            <!--<button class="position-absolute top-0 end-0 m-2" @click="emit('onDeleteClick', props.id)">del</button>-->
+        </div>
 
         <table class="table-borderless m-3">
             <thead>
