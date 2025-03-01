@@ -21,8 +21,15 @@
     })
 
     const testChart = useTemplateRef('testChart')
+    const innInput = useTemplateRef('innInput')
+    
+    const INN = ref()
 
-    onMounted(() => { 
+    function onInnSubmit(){
+        INN.value = innInput.value
+    }
+
+    function showChart(){
         const data = [
             { year: 2010, count: 10 },
             { year: 2011, count: 20 },
@@ -45,11 +52,11 @@
                 ]
             }
         })
-    })
+    }
 </script>
 
 <template>
-    <div class="container mt-2 mb-2">
+    <div class="container mt-2 mb-2" v-if="INN != null">
         <div class="row">
             <!-- Фильтры -->
             <div class="col-2 border">
@@ -73,6 +80,15 @@
                     <input type="checkbox"> Город 2<br>
                     <input type="checkbox"> Город 3<br>
                 </div>
+
+                <div>
+                    <div>
+                        <button @click="showChart">Принять</button>
+                    </div>
+                    <div>
+                        <button>Очистить</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Таблица, графики -->
@@ -83,8 +99,8 @@
                 </div>
 
                 <div class="border mt-2">
-                    Тут графики
-                    <canvas ref="testChart">
+                    <div class="text-center">Тут графики</div>
+                    <canvas class="m-2 p-4 border" ref="testChart">
 
                     </canvas>
                 </div>
@@ -96,6 +112,12 @@
                 <metric-item v-for="metric in metrics" :metric="metric.metric" :value="metric.value"/>
             </div>
         </div>
+    </div>
+    <div v-else>
+        <form @submit.prevent="onInnSubmit">
+            ИНН: <input type="text" ref="innInput">
+            <button type="submit">ОК</button>
+        </form>
     </div>
 </template>
 
