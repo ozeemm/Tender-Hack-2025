@@ -1,0 +1,45 @@
+POST http://127.0.0.1:5000/api/count_of_participation HTTP/1.1
+content-type: application/json
+
+{
+    "INN": "7715368370",
+    "period": "1"
+}
+
+###
+
+POST http://127.0.0.1:5000/api/count_of_wins HTTP/1.1
+content-type: application/json
+
+{
+    "INN": "7734484020",
+    "period": "2"
+}
+
+###
+
+POST http://127.0.0.1:5000/api/share_of_victories HTTP/1.1
+content-type: application/json
+
+{
+    "INN": "501306807502",
+    "period": "1"
+}
+
+###
+
+POST http://127.0.0.1:5000/api/customer_variability HTTP/1.1
+content-type: application/json
+
+{
+    "INN": "7733654906",
+    "period": "3"
+}
+
+###
+
+GET http://127.0.0.1:5000/api/count_of_participation HTTP/1.1
+
+###
+
+POST http://127.0.0.1:5000/empty HTTP/1.1
